@@ -30,14 +30,13 @@ const productTypes: ProductType[] = [
   { id: 2, name: "аксессуар" },
 ];
 
-export default function Search() {
+export default function Search({searchItems, handleSearchItems}: any) {
+  console.log('handleSearchItems: ', typeof handleSearchItems);
+  console.log('searchItems: ', searchItems);
   const [isBreaker, setBreaker] = useState(true);
   const [polesNumber, setPolesNumber] = useState(1);
   const [modulesNumber, setModulesNumber] = useState(1);
-  // const [rangeNominalCurrent, setRangeNomCurrent] = useState(undefined);
   const [selectProducts, setSelectProducts] = useState([]);
-
-  // console.log('products: ', products);
 
   const handleChildData = (data: any) => {
     setBreaker(!isBreaker);
@@ -50,6 +49,10 @@ export default function Search() {
   const handleNumberOfModules = (data: any) => {
     setModulesNumber(data);
   };
+
+  function addItem(event: any): any {
+    handleSearchItems(event.target.value);
+  }
 
   const search = (event: any) => {
     event.preventDefault();
@@ -67,7 +70,7 @@ export default function Search() {
     };
 
     const items: any = products.filter((product: any) => {
-      console.log("item.productType: ", product.productType);
+      // console.log("item.productType: ", product.productType);
       return product.productType === searchRequest.productType;
     });
     setSelectProducts(items);
@@ -104,18 +107,28 @@ export default function Search() {
           Search
         </Button>
       </form>
-      <div className="flex gap-4 flex-wrap m-4">
+      <div className="flex gap-4 flex-wrap m-4 ">
         {selectProducts.map((product: any): any => {
           return (
-              <div
-                className="border border-slate-600 rounded"
-                key={product.articleId}
-              >
-                <h3>{product.productType}</h3>
-                <p>Количество полюсов: {product.numberOfPoles}</p>
-                <p>Количество модулей: {product.numberOfModules}</p>
-                <a href={product.productLink}>More info</a>
-              </div>
+            <div
+              className="w-1/4 border p-4 border-slate-600 rounded"
+              key={product.articleId}
+            >
+              <h3>{product.name}</h3>
+              <p>Арт.: {product.articleId}</p>
+              <p>Количество полюсов: {product.numberOfPoles}</p>
+              <p>Количество модулей: {product.numberOfModules}</p>
+              <p className="mb-2">Tok: {product.ratedCurrent}</p>
+              <p className="mb-2">{product.sign}</p>
+              <a className="text-red-200" href={product.productLink}>More info</a>
+              <button
+                className="block p-2 bg-sky-500/100 hover:bg-sky-700 hover:transition-all  rounded-md"
+                type="button"
+                value={JSON.stringify(product)}
+              onClick={addItem}>
+                Add to Scheme
+              </button>
+            </div>
           );
         })}
       </div>
