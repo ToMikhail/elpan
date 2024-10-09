@@ -1,19 +1,43 @@
+import {
+  Background,
+  BackgroundVariant,
+  Controls,
+  MiniMap,
+  ReactFlow,
+  useNodesState,
+} from "@xyflow/react";
+import { useEffect } from "react";
+
+import "@xyflow/react/dist/style.css";
+
+interface INode {
+  id: string;
+  position: { x: number; y: number };
+  data: { label: string };
+}
+
 export default function SchemePanel({ items }: any) {
-  console.log("items schema: ", items);
+  let currentNodes: INode[] = items.map((item: any, idx: any): any => {
+    return {
+      id: `${idx} + 1`,
+      position: { x: idx * 100, y: idx * 100 },
+      data: { label: JSON.parse(item).articleId.toString() },
+    };
+  });
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(currentNodes);
+
+  useEffect(() => {
+    setNodes(currentNodes);
+  }, [items]);
 
   return (
-      <div className="container mx-auto max-w-7xl h-80 shadow-inner rounded-md border-gray-400 bg-gray-300 py-6 sm:px-6 lg:px-8">
-        <div>
-          {items.map((item: any): any => {
-            const element = JSON.parse(item);
-            console.log("item: ", element);
-            return (
-              <div className="w-10 h-10" key={element.articleId}>
-                <span>{element.sign}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+    <div className="container mx-auto max-w-7xl h-80 shadow-inner rounded-md border-gray-400 bg-gray-300 py-6 sm:px-6 lg:px-8">
+      <ReactFlow nodes={nodes} onNodesChange={onNodesChange}>
+        <Controls />
+        <MiniMap />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+      </ReactFlow>
+    </div>
   );
 }
